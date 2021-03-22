@@ -6,7 +6,7 @@ Genetic Algorithm is a metaheuristic inspired by the process of natural selectio
 ## About
 This project uses GA metaheuristic in order to design pins places on a PCB board. It uses mutation and crossovers and when it comes to selection: roulette and tournament. 
 
-![232323](https://user-images.githubusercontent.com/42720598/112032179-67c20800-8b3c-11eb-9009-db295753a6a8.png)
+![232323](https://user-images.githubusercontent.com/42720598/112032179-67c20800-8b3c-11eb-9009-db295753a6a8.png)  
 *Example screenshot of getting fitter every population*
 
 *This project was made in march 2021*
