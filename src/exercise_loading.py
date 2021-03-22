@@ -9,6 +9,7 @@ def load_exercise(filename):
     height = int(dimensions[1])
     lines = opened.readlines()
     list_of_connections = []
+    
     for line in lines:
         list_of_elements = line.strip().split(';')
         list_of_connections.append((pt.Point(int(list_of_elements[0]), int(list_of_elements[1])),

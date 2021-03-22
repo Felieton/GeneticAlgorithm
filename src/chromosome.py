@@ -18,26 +18,33 @@ class Chromosome:
 
     def get_intersection_amount(self):
         all_points = []
+        
         for i in range(len(self.routes_list)):
             for j in range(len(self.all_points_visited[i])):
                 all_points.append((self.all_points_visited[i][j].x, self.all_points_visited[i][j].y))
+                
         return len(all_points) - len(set(all_points))
 
     def get_routes_length(self):
         length = 0
+        
         for i in range(len(self.step_list)):
             for j in range(len(self.step_list[i])):
                 length += self.step_list[i][j][1]
+                
         return length
 
     def get_segments_amount(self):
         amount = 0
+        
         for i in range(len(self.step_list)):
             amount += len(self.step_list[i])
+            
         return amount
 
     def get_routes_outside_the_board_amount(self, pcb):
         amount = 0
+        
         for i in range(len(self.routes_list)):
             last_outside = False
             for j in range(len(self.routes_list[i])):
@@ -50,10 +57,12 @@ class Chromosome:
                     last_outside = True
                 else:
                     last_outside = False
+                    
         return amount
 
     def get_routes_outside_the_board_length(self, pcb):
         length = 0
+        
         for i in range(len(self.all_points_visited)):
             last_outside = False
             for j in range(len(self.all_points_visited[i])):
@@ -66,6 +75,7 @@ class Chromosome:
                     last_outside = True
                 else:
                     last_outside = False
+                    
         return length
 
     def evaluate(self, pcb):

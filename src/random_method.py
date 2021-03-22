@@ -54,3 +54,4 @@ def get_best_chromosome(population):
                 best_chromosome = population[i]
 
     return best_chromosome
+    

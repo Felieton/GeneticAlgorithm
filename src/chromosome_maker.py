@@ -9,6 +9,7 @@ LEFT = 4
 
 
 def make_random_chromosome(pcb):
+
     chromosome = chr.Chromosome([], [], [])
     for i in range(len(pcb.list_of_connections)):
         chromosome.routes_list.append([])
