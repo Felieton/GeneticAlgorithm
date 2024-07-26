@@ -1,5 +1,6 @@
 from src import chromosome as chr, chromosome_maker as chmr, exercise_loading as el, genetic_algorithm as ga, \
-    operators as op, pcb as pcb, plot_data as plot, population_generator as pg, random_method as rm
+    operators as op, pcb as pcb, plot_data as plot, population_generator as pg, random_method as rm,\
+    simulated_annealing as sa
 
 
 def test_selection_operators(board):
@@ -53,17 +54,34 @@ def test_mutation():
 def test_genetic_alg():
     cross_prob = 0.6
     mutation_prob = 0.6
-    gen_size = 50
+    gen_size = 100
     gen_amount = 100
+    multiple_parents = False
 
     best_chromosome, (avg_fitness, best_fitness, worst_fitness) =\
-        ga.GeneticAlgorithm(board, cross_prob, mutation_prob).genetic_algorithm(gen_size, gen_amount, "tournament")
+        ga.GeneticAlgorithm(board, cross_prob, mutation_prob).genetic_algorithm(gen_size, gen_amount, "roulette", 0, multiple_parents)
 
     print(min(best_fitness))
     print(max(worst_fitness))
     print(sum(avg_fitness) / len(avg_fitness))
 
     plot.plot_data_on_chart(avg_fitness, best_fitness, worst_fitness)
+
+
+def test_simulated_annealing():
+    temperature = 5000
+    for i in range(1, 11):
+        all = 0
+        best = 1000
+        worst = 0
+        for j in range(10):
+            res = sa.SimulatedAnnealing(board).simulated_annealing(temperature, i)
+            all += res
+            if res > worst:
+                worst = res
+            if res < best:
+                best = res
+        print(f'for {i}: avg: {all/10}    best: {best}    worst: {worst}')
 
 
 def test_random_method():
@@ -74,6 +92,7 @@ def test_random_method():
 
 
 if __name__ == '__main__':
-    width, height, list_of_connections = el.load_exercise("./exercises/zad1.txt")
+    width, height, list_of_connections = el.load_exercise("../exercises/zad1.txt")
     board = pcb.PCB(width, height, list_of_connections)
-    test_genetic_alg()
+    # test_genetic_alg()
+    test_simulated_annealing()

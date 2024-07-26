@@ -1,5 +1,5 @@
+import math
 import random
-import numpy as np
 import copy as cop
 from src import chromosome as chr, point as pt
 
@@ -38,19 +38,53 @@ def roulette_selection(population):
     weights = []
 
     for chromosome in population:
-        weights.append(min_eval/chromosome.evaluation)
+        weights.append(min_eval / chromosome.evaluation)
 
     chosen = random.choices(population, weights)[0]
 
     return chosen
 
 
-def crossover(parents):
+def crossover(parents, crossings):
+    child = chr.Chromosome([], [], [])
+    last = 1
+    counter = 0
+
+    for i in range(len(parents[0].routes_list)):
+        chosen_parent = 0
+        if crossings == 0:
+            chosen_parent = random.randint(0, 1)
+        elif crossings == 1:
+            if i <= len(parents[0].routes_list) / 2:
+                chosen_parent = 0
+            else:
+                chosen_parent = 1
+        elif crossings < len(parents[0].routes_list):
+            if counter == math.floor(len(parents[0].routes_list) / crossings):
+                last *= -1
+                counter = 0
+            if last == 1:
+                chosen_parent = 0
+            else:
+                chosen_parent = 1
+            counter += 1
+
+        route = cop.deepcopy(parents[chosen_parent].routes_list[i])
+        steps = cop.deepcopy(parents[chosen_parent].step_list[i])
+        apv = cop.deepcopy(parents[chosen_parent].all_points_visited[i])
+
+        child.routes_list.append(route)
+        child.step_list.append(steps)
+        child.all_points_visited.append(apv)
+
+    return child
+
+
+def multiple_crossover(parents, num_of_parents):
     child = chr.Chromosome([], [], [])
 
     for i in range(len(parents[0].routes_list)):
-        chosen_parent = random.randint(0, 1)
-
+        chosen_parent = random.randint(0, num_of_parents - 1)
         route = cop.deepcopy(parents[chosen_parent].routes_list[i])
         steps = cop.deepcopy(parents[chosen_parent].step_list[i])
         apv = cop.deepcopy(parents[chosen_parent].all_points_visited[i])
@@ -85,15 +119,15 @@ def mutation(chromosome, board):
             if left_neighbour[0] == 'up' and right_neighbour[0] == 'down':
                 step_list[step_index - 1] = ('up', left_neighbour[1] + 1)
                 step_list[step_index + 1] = ('down', right_neighbour[1] + 1)
-                
+
             elif left_neighbour[0] == 'up' and right_neighbour[0] == 'up':
                 step_list[step_index - 1] = ('up', left_neighbour[1] + 1)
                 step_list[step_index + 1] = ('up', right_neighbour[1] - 1)
-                
+
             elif left_neighbour[0] == 'down' and right_neighbour[0] == 'down':
                 step_list[step_index - 1] = ('down', left_neighbour[1] - 1)
                 step_list[step_index + 1] = ('down', right_neighbour[1] + 1)
-                
+
             elif left_neighbour[0] == 'down' and right_neighbour[0] == 'up':
                 step_list[step_index - 1] = ('down', left_neighbour[1] - 1)
                 step_list[step_index + 1] = ('up', right_neighbour[1] - 1)
@@ -102,15 +136,15 @@ def mutation(chromosome, board):
             if left_neighbour[0] == 'up' and right_neighbour[0] == 'down':
                 step_list[step_index - 1] = ('up', left_neighbour[1] - 1)
                 step_list[step_index + 1] = ('down', right_neighbour[1] - 1)
-                
+
             elif left_neighbour[0] == 'up' and right_neighbour[0] == 'up':
                 step_list[step_index - 1] = ('up', left_neighbour[1] - 1)
                 step_list[step_index + 1] = ('up', right_neighbour[1] + 1)
-                
+
             elif left_neighbour[0] == 'down' and right_neighbour[0] == 'down':
                 step_list[step_index - 1] = ('down', left_neighbour[1] - 1)
                 step_list[step_index + 1] = ('down', right_neighbour[1] + 1)
-                
+
             elif left_neighbour[0] == 'down' and right_neighbour[0] == 'up':
                 step_list[step_index - 1] = ('down', left_neighbour[1] + 1)
                 step_list[step_index + 1] = ('up', right_neighbour[1] + 1)
@@ -131,15 +165,15 @@ def mutation(chromosome, board):
             if left_neighbour[0] == 'right' and right_neighbour[0] == 'left':
                 step_list[step_index - 1] = ('right', left_neighbour[1] + 1)
                 step_list[step_index + 1] = ('left', right_neighbour[1] + 1)
-                
+
             elif left_neighbour[0] == 'right' and right_neighbour[0] == 'right':
                 step_list[step_index - 1] = ('right', left_neighbour[1] + 1)
                 step_list[step_index + 1] = ('right', right_neighbour[1] - 1)
-                
+
             elif left_neighbour[0] == 'left' and right_neighbour[0] == 'left':
                 step_list[step_index - 1] = ('left', left_neighbour[1] - 1)
                 step_list[step_index + 1] = ('left', right_neighbour[1] + 1)
-                
+
             elif left_neighbour[0] == 'left' and right_neighbour[0] == 'right':
                 step_list[step_index - 1] = ('left', left_neighbour[1] - 1)
                 step_list[step_index + 1] = ('right', right_neighbour[1] - 1)
@@ -148,15 +182,15 @@ def mutation(chromosome, board):
             if left_neighbour[0] == 'right' and right_neighbour[0] == 'left':
                 step_list[step_index - 1] = ('right', left_neighbour[1] - 1)
                 step_list[step_index + 1] = ('left', right_neighbour[1] - 1)
-                
+
             elif left_neighbour[0] == 'right' and right_neighbour[0] == 'right':
                 step_list[step_index - 1] = ('right', left_neighbour[1] - 1)
                 step_list[step_index + 1] = ('right', right_neighbour[1] + 1)
-                
+
             elif left_neighbour[0] == 'left' and right_neighbour[0] == 'left':
                 step_list[step_index - 1] = ('left', left_neighbour[1] - 1)
                 step_list[step_index + 1] = ('left', right_neighbour[1] + 1)
-                
+
             elif left_neighbour[0] == 'left' and right_neighbour[0] == 'right':
                 step_list[step_index - 1] = ('left', left_neighbour[1] + 1)
                 step_list[step_index + 1] = ('right', right_neighbour[1] + 1)
@@ -171,23 +205,23 @@ def fix_negative_values(chromosome, path_index):
     for i in range(len(chromosome.step_list[path_index])):
         if chromosome.step_list[path_index][i][1] == -1:
             direction = chromosome.step_list[path_index][i][0]
-            
+
             if direction == 'up':
                 chromosome.step_list[path_index][i] = ('down', 1)
-                
+
             if direction == 'down':
                 chromosome.step_list[path_index][i] = ('up', 1)
-                
+
             if direction == 'left':
                 chromosome.step_list[path_index][i] = ('right', 1)
-                
+
             if direction == 'right':
                 chromosome.step_list[path_index][i] = ('left', 1)
 
 
 def delete_steps_with_0(chromosome, path_index):
     new_list = []
-    
+
     for i in range(len(chromosome.step_list[path_index])):
         if chromosome.step_list[path_index][i][1] != 0:
             new_list.append(chromosome.step_list[path_index][i])
@@ -198,7 +232,7 @@ def delete_steps_with_0(chromosome, path_index):
 def concatenate_same_directions(chromosome, path_index):
     indexes_to_delete = []
     new_list = []
-    
+
     for i in range(len(chromosome.step_list[path_index]) - 1):
         if chromosome.step_list[path_index][i][0] == chromosome.step_list[path_index][i + 1][0]:
             indexes_to_delete.append(i + 1)

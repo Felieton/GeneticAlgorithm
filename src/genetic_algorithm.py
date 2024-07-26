@@ -10,7 +10,7 @@ class GeneticAlgorithm:
         self.crossover_probability = crossover_prob
         self.mutation_probability = mutation_prob
 
-    def genetic_algorithm(self, generation_size, generation_amount, selection_type):
+    def genetic_algorithm(self, generation_size, generation_amount, selection_type, elitist_size, multiple_parents):
         population = pg.generate_population(generation_size, self.board)
 
         all_generations_avg_fitness = []
@@ -24,18 +24,30 @@ class GeneticAlgorithm:
 
         for i in range(generation_amount - 1):
             generation_population = []
+            if elitist_size != 0:
+                for j in range(elitist_size):
+                    generation_population.append(best_chromosome)
             while len(generation_population) < generation_size:
                 if selection_type == "roulette":
                     parent1 = op.roulette_selection(population)
                     parent2 = op.roulette_selection(population)
+                    if multiple_parents:
+                        parent3 = op.roulette_selection(population)
+                        parent4 = op.roulette_selection(population)
                 else:
                     parent1 = op.tournament_selection(population, 10)
                     parent2 = op.tournament_selection(population, 10)
 
-                if random.random() < self.crossover_probability:
-                    child = op.crossover([parent1, parent2])
+                if multiple_parents:
+                    if random.random() < self.crossover_probability:
+                        child = op.multiple_crossover([parent1, parent2, parent3, parent4], 4)
+                    else:
+                        child = copy.deepcopy(parent1)
                 else:
-                    child = copy.deepcopy(parent1)
+                    if random.random() < self.crossover_probability:
+                        child = op.crossover([parent1, parent2], 0)
+                    else:
+                        child = copy.deepcopy(parent1)
                 if random.random() < self.mutation_probability:
                     op.mutation(child, self.board)
 
